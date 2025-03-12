@@ -8,5 +8,5 @@ cd to root \
  clone repo \
 ```git clone git@github.com:AllenChienXXX/hackerbot_install.git``` \
 run install script \
-```./hackerbot_software_install.sh``` \
+```./hackerbot_software_install.sh``` 
 
