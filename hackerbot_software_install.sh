@@ -81,7 +81,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd hackerbot_lib/hackerbot_modules/
+cd $HOME_DIR/hackerbot_ws/hackerbot_lib/hackerbot_modules/
 echo "Installing hackerbot lib..."
 pip install .
 if [ $? -ne 0 ]; then
@@ -92,14 +92,13 @@ fi
 cd $HOME_DIR/hackerbot_ws
 
 echo "Cloning web app..."
-git clone https://github.com/AllenChienXXX/map_UI.git
+git clone https://github.com/AllenChienXXX/hackerbot-web.git
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone web app repository."
     exit 1
 fi
 
-cd map_UI/
-cd hackerbot-dashboard/
+cd $HOME_DIR/hackerbot_ws/hackerbot-web/hackerbot-command-center/
 echo "Installing frontend dependencies..."
 npm install
 if [ $? -ne 0 ]; then
@@ -107,6 +106,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+cd $HOME_DIR/hackerbot_ws/hackerbot-web/flask-hackerbot-api/
 cd ../flask_app/
 echo "Installing backend dependencies..."
 pip install -r requirements.txt
