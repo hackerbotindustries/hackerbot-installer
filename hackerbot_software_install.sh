@@ -97,7 +97,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot/hackerbot_lib/hackerbot_modules/
+cd $HOME_DIR/hackerbot/hackerbot-lib/hackerbot_modules/
 echo "Installing hackerbot lib..."
 pip install .
 if [ $? -ne 0 ]; then
