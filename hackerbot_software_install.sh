@@ -37,15 +37,12 @@ handle_install_failure() {
 
 cleanup() {
     echo "Cleaning up..."
-    rm -rf "$HOME_DIR/hackerbot_logs"
-    rm -rf "$HOME_DIR/hackerbot_maps"
-    rm -rf "$HOME_DIR/hackerbot_ws"
-    rm -rf "$HOME_DIR/hackerbot_venv"
+    rm -rf "$HOME_DIR/hackerbot"
 }
 
 read -p "Do you want the virtual environment to activate automatically when you start a terminal (y/n)? " activate_venv
 if [[ "$activate_venv" == "y" || "$activate_venv" == "Y" ]]; then
-    VENV_CMD="source /home/$(whoami)/hackerbot_venv/bin/activate"
+    VENV_CMD="source /home/$(whoami)/hackerbot/hackerbot_venv/bin/activate"
     if ! grep -Fxq "$VENV_CMD" ~/.bashrc; then
         echo "Adding virtual environment activation to .bashrc..."
         echo "$VENV_CMD" >> ~/.bashrc
@@ -59,14 +56,11 @@ fi
 HOME_DIR="/home/$(whoami)"
 
 # Remove existing directories before recreating them
-rm -rf "$HOME_DIR/hackerbot_logs"
-rm -rf "$HOME_DIR/hackerbot_maps"
-rm -rf "$HOME_DIR/hackerbot_ws"
-rm -rf "$HOME_DIR/hackerbot_venv"
+cleanup
 
-mkdir -p "$HOME_DIR/hackerbot_logs" # Directory for logs
-mkdir -p "$HOME_DIR/hackerbot_maps" # Directory for map data
-mkdir -p "$HOME_DIR/hackerbot_ws"   # Directory for hackerbot workspace
+mkdir -p "$HOME_DIR/hackerbot"   # Directory for hackerbot workspace
+mkdir -p "$HOME_DIR/hackerbot/logs" # Directory for logs
+mkdir -p "$HOME_DIR/hackerbot/maps" # Directory for map data
 
 LOG_FILE="$HOME_DIR/hackerbot_logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
 exec > >(tee -a "$LOG_FILE") 2>&1
@@ -84,26 +78,26 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Creating virtual environment..."
-python3 -m venv $HOME_DIR/hackerbot_venv
+python3 -m venv $HOME_DIR/hackerbot/hackerbot_venv
 if [ $? -ne 0 ]; then
     echo "Error: Failed to create virtual environment."
     cleanup
     exit 1
 fi
-source $HOME_DIR/hackerbot_venv/bin/activate
+source $HOME_DIR/hackerbot/hackerbot_venv/bin/activate
 echo "Virtual environment activated."
 
-cd $HOME_DIR/hackerbot_ws
+cd $HOME_DIR/hackerbot
 
 echo "Cloning hackerbot lib..."
-git clone git@github.com:AllenChienXXX/hackerbot_lib.git
+git clone git@github.com:AllenChienXXX/hackerbot-lib.git
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone hackerbot lib repository."
     cleanup
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot_ws/hackerbot_lib/hackerbot_modules/
+cd $HOME_DIR/hackerbot/hackerbot-lib/hackerbot_modules/
 echo "Installing hackerbot lib..."
 pip install .
 if [ $? -ne 0 ]; then
@@ -112,17 +106,27 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot_ws
+cd $HOME_DIR/hackerbot
 
-echo "Cloning web app..."
-git clone git@github.com:AllenChienXXX/hackerbot_web.git
+echo "Cloning flask api..."
+git clone git@github.com:AllenChienXXX/hackerbot-flask-api.git
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone web app repository."
+    echo "Error: Failed to clone flask api repository."
     cleanup
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot_ws/hackerbot_web/hackerbot_command_center/
+cd $HOME_DIR/hackerbot
+
+echo "Cloning command center..."
+git clone git@github.com:AllenChienXXX/hackerbot-command-center.git
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to clone flask api repository."
+    cleanup
+    exit 1
+fi
+
+cd $HOME_DIR/hackerbot/hackerbot-command-center/
 echo "Installing frontend dependencies..."
 npm install
 if [ $? -ne 0 ]; then
@@ -131,7 +135,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot_ws/hackerbot_web/hackerbot_flask_api/
+cd $HOME_DIR/hackerbot/hackerbot-flask-api/
 echo "Installing backend dependencies..."
 pip install -r requirements.txt
 if [ $? -ne 0 ]; then
