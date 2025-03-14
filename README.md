@@ -16,28 +16,14 @@ Before you begin, ensure that you have the following:
 
 ### Installation
 
-Follow these steps to install the HackerBot software:
-
-1. **Clone the repository**  
-   Open a terminal and navigate to your desired installation directory. Then, clone the repository by running:
+Follow the following to install the HackerBot software:
    ```bash
-   git clone git@github.com:AllenChienXXX/hackerbot_install.git
+   cd ~
+   git clone https://github.com/hackerbotindustries/hackerbot-installer.git
+   cd hackerbot-installer
+   ./hackerbot_software-install.sh
    ```
 
-2. **Navigate to the cloned directory**  
-   Change to the root directory of the cloned repository:
-   ```bash
-   cd hackerbot_install
-   ```
-
-3. **Run the installation script**  
-   Make the script executable (if it’s not already) and run the installation script:
-   ```bash
-   chmod +x hackerbot_software_install.sh
-   ./hackerbot_software_install.sh
-   ```
-
-   This will set up the necessary components for the HackerBot software.
 
 ---
 
