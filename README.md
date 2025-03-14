@@ -21,29 +21,19 @@ Follow the following to install the HackerBot software:
    cd ~
    git clone https://github.com/hackerbotindustries/hackerbot-installer.git
    cd hackerbot-installer
-   ./hackerbot_software-install.sh
+   ./hackerbot_software_install.sh
    ```
 
 
 ---
 
-### Update Software
+### Check Software
 
-To update the software, follow these steps:
-
-1. Navigate to the root of your local repository:
+To check the software, run the below commands:
    ```bash
-   cd hackerbot_install
+   cd hackerbot-installer
+   ./hackerbot_software_check.sh
    ```
 
-2. Pull the latest changes from the repository:
-   ```bash
-   git pull origin main
-   ```
-
-3. Run the install script again to apply any updates:
-   ```bash
-   ./hackerbot_software_install.sh
-   ```
 
 ---
