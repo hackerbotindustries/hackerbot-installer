@@ -20,7 +20,7 @@ Follow the following to install the HackerBot software:
    ```bash
    cd ~
    git clone https://github.com/hackerbotindustries/hackerbot-installer.git
-   cd hackerbot-installer
+   cd ~/hackerbot-installer
    ./hackerbot_software_install.sh
    ```
 
@@ -31,7 +31,7 @@ Follow the following to install the HackerBot software:
 
 To check the software, run the below commands:
    ```bash
-   cd hackerbot-installer
+   cd ~/hackerbot-installer
    ./hackerbot_software_check.sh
    ```
 
