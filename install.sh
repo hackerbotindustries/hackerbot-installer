@@ -129,7 +129,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot/hackerbot-command-center/
+cd $HOME_DIR/hackerbot/hackerbot-command-center/react/
 echo "Installing frontend dependencies..."
 npm install
 if [ $? -ne 0 ]; then
@@ -145,6 +145,31 @@ if [ $? -ne 0 ]; then
     echo "Error: Failed to install backend dependencies."
     cleanup
     exit 1
+fi
+
+
+# Function to add a line to crontab if not already present
+add_to_cron() {
+    local cmd="$1"
+    (crontab -l 2>/dev/null | grep -v -F "$cmd"; echo "$cmd") | crontab -
+}
+
+echo "Do you want the Flask API to run on startup? (y/n)"
+read -r flask_answer
+
+echo "Do you want the Command Center to run on startup? (y/n)"
+read -r command_center_answer
+
+if [[ "$flask_answer" == "y"  || "$flask_answer" == "Y" ]]; then
+    FLASK_CRON="@reboot bash -c 'source ~/hackerbot/hackerbot_venv/bin/activate && ./hackerbot/hackerbot-flask-api/launch_flask_api.sh' &"
+    add_to_cron "$FLASK_CRON"
+    echo "Flask API added to startup."
+fi
+
+if [[ "$command_center_answer" == "y" || "$command_center_answer" == "Y" ]]; then
+    COMMAND_CENTER_CRON="@reboot bash -c './hackerbot/hackerbot-command-center/launch_command_center.sh' &"
+    add_to_cron "$COMMAND_CENTER_CRON"
+    echo "Command Center added to startup."
 fi
 
 echo "Setup completed successfully!"
