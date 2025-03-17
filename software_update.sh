@@ -39,10 +39,10 @@ for PACKAGE in "${REQUIRED_PACKAGES[@]}"; do
     fi
 done
 
-# Notify about missing packages
-if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
-    echo "The following APT packages are missing: ${MISSING_PACKAGES[*]}"
-    echo "Please install them manually using: sudo apt-get install -y ${MISSING_PACKAGES[*]}"
+
+if [ ${#MISSING_APT_PACKAGES[@]} -ne 0 ]; then
+    echo "Installing missing APT packages..."
+    sudo apt-get update && sudo apt-get install -y "${MISSING_APT_PACKAGES[@]}"
 else
     echo "All required APT packages are installed. ✅"
 fi
@@ -79,8 +79,8 @@ done
 
 # Notify about missing pip packages
 if [ ${#MISSING_PIP_PACKAGES[@]} -ne 0 ]; then
-    echo "The following PIP packages are missing: ${MISSING_PIP_PACKAGES[*]}"
-    echo "Please install them manually using: pip install ${MISSING_PIP_PACKAGES[*]}"
+    echo "Installing missing PIP packages..."
+    pip install "${MISSING_PIP_PACKAGES[@]}"
 else
     echo "All required PIP packages are installed. ✅"
 fi
