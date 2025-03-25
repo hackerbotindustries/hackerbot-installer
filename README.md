@@ -32,7 +32,7 @@ NOTE: Do not run `install.sh` from a VNC client. It can hang.
 To check and update the software, run the below commands:
    ```bash
    cd ~/hackerbot-installer
-   ./software_update.sh
+   ./install.sh
    ```
 
 ---
