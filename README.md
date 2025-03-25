@@ -21,19 +21,18 @@ Follow the following to install the HackerBot software:
    cd ~
    git clone https://github.com/hackerbotindustries/hackerbot-installer.git
    cd ~/hackerbot-installer
-   ./hackerbot_software_install.sh
+   ./install.sh
    ```
-
-
 ---
 
-### Check Software
+NOTE: Do not run `install.sh` from a VNC client. It can hang.
 
-To check the software, run the below commands:
+### Check and Update Software
+
+To check and update the software, run the below commands:
    ```bash
    cd ~/hackerbot-installer
-   ./hackerbot_software_check.sh
+   ./software_update.sh
    ```
-
 
 ---
