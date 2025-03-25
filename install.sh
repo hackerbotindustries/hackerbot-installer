@@ -90,8 +90,8 @@ echo "Virtual environment activated."
 cd $HOME_DIR/hackerbot
 
 echo "Cloning hackerbot lib..."
-git clone git@github.com:hackerbotindustries/hackerbot-lib.git # ssh
-# git clone https://github.com/hackerbotindustries/hackerbot-lib.git #HTTPS
+# git clone git@github.com:hackerbotindustries/hackerbot-lib.git # ssh
+git clone https://github.com/hackerbotindustries/hackerbot-lib.git #HTTPS
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone hackerbot lib repository."
     cleanup
@@ -110,8 +110,8 @@ fi
 cd $HOME_DIR/hackerbot
 
 echo "Cloning flask api..."
-git clone git@github.com:hackerbotindustries/hackerbot-flask-api.git # ssh
-# git clone https://github.com/hackerbotindustries/hackerbot-flask-api.git #HTTPS
+# git clone git@github.com:hackerbotindustries/hackerbot-flask-api.git # ssh
+git clone https://github.com/hackerbotindustries/hackerbot-flask-api.git #HTTPS
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone flask api repository."
     cleanup
@@ -121,8 +121,8 @@ fi
 cd $HOME_DIR/hackerbot
 
 echo "Cloning command center..."
-git clone git@github.com:hackerbotindustries/hackerbot-command-center.git # ssh
-# git clone https://github.com/hackerbotindustries/hackerbot-command-center.git #HTTPS
+# git clone git@github.com:hackerbotindustries/hackerbot-command-center.git # ssh
+git clone https://github.com/hackerbotindustries/hackerbot-command-center.git #HTTPS
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone flask api repository."
     cleanup
