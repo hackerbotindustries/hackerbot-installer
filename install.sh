@@ -42,7 +42,7 @@ cleanup() {
 HOME_DIR="/home/$(whoami)"
 
 # Prompt user for confirmation before proceeding
-read -p "This script will remove the directory at $HOME_DIR/hackerbot. Do you want to continue? (y/n): " confirm
+read -p "This script will remove the directory at $HOME_DIR/hackerbot and all of its contents. Do you want to continue? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo "Operation canceled. Exiting."
     exit 1
