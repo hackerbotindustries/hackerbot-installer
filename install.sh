@@ -39,6 +39,14 @@ cleanup() {
     echo "Cleaning up..."
     rm -rf "$HOME_DIR/hackerbot"
 }
+HOME_DIR="/home/$(whoami)"
+
+# Prompt user for confirmation before proceeding
+read -p "This script will remove the directory at $HOME_DIR/hackerbot. Do you want to continue? (y/n): " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Operation canceled. Exiting."
+    exit 1
+fi
 
 read -p "Do you want the virtual environment to activate automatically when you start a terminal (y/n)? " activate_venv
 if [[ "$activate_venv" == "y" || "$activate_venv" == "Y" ]]; then
@@ -52,8 +60,6 @@ if [[ "$activate_venv" == "y" || "$activate_venv" == "Y" ]]; then
     fi
 fi
 
-
-HOME_DIR="/home/$(whoami)"
 
 # Remove existing directories before recreating them
 cleanup
