@@ -1,4 +1,4 @@
-# hackerbot_install
+# hackerbot-install
 
 This repository provides installation instructions and scripts for setting up the HackerBot software.
 
