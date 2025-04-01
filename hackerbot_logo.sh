@@ -9,6 +9,10 @@
 # Updated:    2025.04.01
 #
 # This script prints the Hackerbot logo to the console.
+#
+# Special thanks to the following for their code contributions to this codebase:
+# Allen Chien - https://github.com/AllenChienXXX
+# Ian Bernstein - https://github.com/arobodude
 ################################################################################
 echo -e "###########################################################" 
 echo -e "\e[1;37m #  #   ##    ###  #   #  ####  ### \e[1;32m  ###     #####  #####"

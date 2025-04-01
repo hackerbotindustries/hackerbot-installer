@@ -10,6 +10,10 @@
 # Updated:    2025.04.01
 #
 # This script checks for updates to the Hackerbot software on a Raspberry Pi 5.
+#
+# Special thanks to the following for their code contributions to this codebase:
+# Allen Chien - https://github.com/AllenChienXXX
+# Ian Bernstein - https://github.com/arobodude
 ################################################################################
 set -e  # Exit on error
 

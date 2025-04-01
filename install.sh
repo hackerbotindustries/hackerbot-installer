@@ -13,6 +13,9 @@
 #
 # Special thanks to the following for their code contributions to this codebase:
 # Kyoung Whan Choe - https://github.com/kywch 
+# Allen Chien - https://github.com/AllenChienXXX
+# Ian Bernstein - https://github.com/arobodude
+################################################################################
 
 
 set -o pipefail
