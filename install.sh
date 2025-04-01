@@ -1,4 +1,23 @@
 #!/bin/bash
+################################################################################
+# Copyright (c) 2025 Hackerbot Industries LLC
+#
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Created By: Allen Chien
+# Created:    April 2025
+# Updated:    2025.04.01
+#
+# This script installs the Hackerbot software on a Raspberry Pi 5.
+#
+# Special thanks to the following for their code contributions to this codebase:
+# Kyoung Whan Choe - https://github.com/kywch 
+# Allen Chien - https://github.com/AllenChienXXX
+# Ian Bernstein - https://github.com/arobodude
+################################################################################
+
+
 set -o pipefail
 
 echo -e "###########################################################" 
@@ -39,6 +58,7 @@ cleanup() {
     echo "Cleaning up..."
     rm -rf "$HOME_DIR/hackerbot"
 }
+
 HOME_DIR="/home/$(whoami)"
 
 # Prompt user for confirmation before proceeding
@@ -159,8 +179,15 @@ add_to_cron() {
     local cmd="$1"
     (crontab -l 2>/dev/null | grep -v -F "$cmd"; echo "$cmd") | crontab -
 }
+echo "
+--------------------------------------------
+When starting FLASK API, and COMMAND CENTER at boot,
+the script will occupy the serial port, and prevent other processes from using it.
 
-echo "Do you want the Flask API to run on startup? (y/n)"
+To avoid this, you can run the script manually, and it will not occupy the serial port.
+--------------------------------------------
+Do you want the Flask API to run on startup? (y/n)
+"
 read -r flask_answer
 
 echo "Do you want the Command Center to run on startup? (y/n)"
