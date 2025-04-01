@@ -39,6 +39,7 @@ cleanup() {
     echo "Cleaning up..."
     rm -rf "$HOME_DIR/hackerbot"
 }
+
 HOME_DIR="/home/$(whoami)"
 
 # Prompt user for confirmation before proceeding
@@ -159,8 +160,15 @@ add_to_cron() {
     local cmd="$1"
     (crontab -l 2>/dev/null | grep -v -F "$cmd"; echo "$cmd") | crontab -
 }
+echo "
+--------------------------------------------
+When starting FLASK API, and COMMAND CENTER at boot,
+the script will occupy the serial port, and prevent other processes from using it.
 
-echo "Do you want the Flask API to run on startup? (y/n)"
+To avoid this, you can run the script manually, and it will not occupy the serial port.
+--------------------------------------------
+Do you want the Flask API to run on startup? (y/n)
+"
 read -r flask_answer
 
 echo "Do you want the Command Center to run on startup? (y/n)"
