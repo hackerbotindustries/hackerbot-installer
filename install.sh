@@ -1,4 +1,5 @@
 #!/bin/bash
+################################################################################
 # Copyright (c) 2025 Hackerbot Industries LLC
 #
 # This source code is licensed under the MIT license found in the

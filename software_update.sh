@@ -1,4 +1,5 @@
 #!/bin/bash
+################################################################################
 # Copyright (c) 2025 Hackerbot Industries LLC
 #
 # This source code is licensed under the MIT license found in the
@@ -9,7 +10,7 @@
 # Updated:    2025.04.01
 #
 # This script checks for updates to the Hackerbot software on a Raspberry Pi 5.
-
+################################################################################
 set -e  # Exit on error
 
 echo -e "###########################################################" 
