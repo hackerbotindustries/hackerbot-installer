@@ -10,11 +10,11 @@ This pull request introduces a new feature or enhancement and aligns with existi
 **How to check locally**
 - Clone the repository if not already available:  
   ```shell
-  git clone https://github.com/hackerbotindustries/hackerbot-command-center.git
+  git clone https://github.com/hackerbotindustries/hackerbot-installer.git
   ```
 - Navigate to the project directory:
   ```shell
-  cd ~/hackerbot/hackerbot-command-center
+  cd ~/hackerbot-installer
   ```
 - Switch to this branch:
   ```shell
