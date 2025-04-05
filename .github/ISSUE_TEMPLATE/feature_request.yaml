@@ -15,6 +15,12 @@ body:
     validations:
       required: true
   - type: textarea
+    id: description
+    attributes:
+      label: "Full Description"
+      description: "Provide a detailed explanation of the feature, including goals, benefits, and potential use cases."
+      placeholder: "Describe the feature in detail..."
+  - type: textarea
     id: related-programs
     attributes:
       label: "Related Programs"
