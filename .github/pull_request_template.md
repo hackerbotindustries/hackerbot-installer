@@ -33,5 +33,4 @@ This pull request introduces a new feature or enhancement and aligns with existi
 - [ ] Ensure all related files are correctly updated.
 - [ ] Confirm that all necessary tests have been run and passed.
 - [ ] Validate that no new bugs are introduced by the fix.
-**Finally**
 - [ ] Good to merge!
