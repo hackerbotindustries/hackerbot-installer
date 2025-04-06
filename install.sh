@@ -124,11 +124,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot/hackerbot-lib/hackerbot_modules/
-echo "Installing hackerbot lib..."
+cd $HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/
+echo "Installing hackerbot python package..."
 pip install .
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to install hackerbot lib."
+    echo "Error: Failed to install hackerbot python package."
     cleanup
     exit 1
 fi
@@ -136,7 +136,7 @@ fi
 cd $HOME_DIR/hackerbot
 
 echo "Cloning flask api..."
-# git clone git@github.com:hackerbotindustries/hackerbot-flask-api.git # ssh
+
 git clone https://github.com/hackerbotindustries/hackerbot-flask-api.git #HTTPS
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone flask api repository."
@@ -147,7 +147,7 @@ fi
 cd $HOME_DIR/hackerbot
 
 echo "Cloning command center..."
-# git clone git@github.com:hackerbotindustries/hackerbot-command-center.git # ssh
+
 git clone https://github.com/hackerbotindustries/hackerbot-command-center.git #HTTPS
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone flask api repository."
