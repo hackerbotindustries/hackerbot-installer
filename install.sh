@@ -115,11 +115,11 @@ echo "Virtual environment activated."
 
 cd $HOME_DIR/hackerbot
 
-echo "Cloning hackerbot lib..."
-# git clone git@github.com:hackerbotindustries/hackerbot-lib.git # ssh
-git clone https://github.com/hackerbotindustries/hackerbot-lib.git #HTTPS
+echo "Cloning hackerbot python package..."
+
+git clone  https://github.com/hackerbotindustries/hackerbot-python-package.git #HTTPS
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone hackerbot lib repository."
+    echo "Error: Failed to clone hackerbot python package repository."
     cleanup
     exit 1
 fi
