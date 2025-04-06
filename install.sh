@@ -29,7 +29,7 @@ echo -e "\e[1;37m #  #  #  #   ###  #   #  ####  #  #\e[1;32m  ###   #####      
 echo -e "\e[0m###########################################################"
 
 echo "--------------------------------------------"
-echo "STARTING HACKERBOT SOFTWARE INSTALL"
+echo "STARTING HACKERBOT SOFTWARE INSTALLER"
 echo "--------------------------------------------"
 
 check_raspberry_pi() {
