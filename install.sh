@@ -61,11 +61,20 @@ cleanup() {
 
 HOME_DIR="/home/$(whoami)"
 
-# Prompt user for confirmation before proceeding
-read -p "This script will remove the directory at $HOME_DIR/hackerbot and all of its contents. Do you want to continue? (y/n): " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo "Operation canceled. Exiting."
+echo "This installation script will take a few minutes to complete."
+read -p "Do you wish to continue? (y/n): " proceed
+if [[ "$proceed" != "y" && "$proceed" != "Y" ]]; then
+    echo "Installation aborted by user."
     exit 1
+fi
+
+if [ -d "$HOME_DIR/hackerbot" ]; then
+    echo "WARNING: The directory $HOME_DIR/hackerbot already exists. It will be removed and replaced."
+    read -p "Do you still want to continue? (y/n): " dir_confirm
+    if [[ "$dir_confirm" != "y" && "$dir_confirm" != "Y" ]]; then
+        echo "Operation canceled. Exiting."
+        exit 1
+    fi
 fi
 
 read -p "Do you want the virtual environment to activate automatically when you start a terminal (y/n)? " activate_venv
