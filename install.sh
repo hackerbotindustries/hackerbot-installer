@@ -88,7 +88,7 @@ mkdir -p "$HOME_DIR/hackerbot"   # Directory for hackerbot workspace
 mkdir -p "$HOME_DIR/hackerbot/logs" # Directory for logs
 mkdir -p "$HOME_DIR/hackerbot/maps" # Directory for map data
 
-LOG_FILE="$HOME_DIR/hackerbot_logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
+LOG_FILE="$HOME_DIR/hackerbot/logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 echo "Updating and upgrading system..."
@@ -103,15 +103,15 @@ if [ $? -ne 0 ]; then
     handle_install_failure
 fi
 
-echo "Creating virtual environment..."
+echo "Creating python virtual environment..."
 python3 -m venv $HOME_DIR/hackerbot/hackerbot_venv
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to create virtual environment."
+    echo "Error: Failed to create python virtual environment."
     cleanup
     exit 1
 fi
 source $HOME_DIR/hackerbot/hackerbot_venv/bin/activate
-echo "Virtual environment activated."
+echo "Python virtual environment activated."
 
 cd $HOME_DIR/hackerbot
 
@@ -124,14 +124,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd $HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/
-echo "Installing hackerbot python package..."
-pip install .
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to install hackerbot python package."
-    cleanup
-    exit 1
-fi
+# cd $HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/
+# echo "Installing hackerbot python package..."
+# pip install .
+# if [ $? -ne 0 ]; then
+#     echo "Error: Failed to install hackerbot python package."
+#     cleanup
+#     exit 1
+# fi
 
 cd $HOME_DIR/hackerbot
 
