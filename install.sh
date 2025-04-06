@@ -130,15 +130,15 @@ for repo in hackerbot-python-package hackerbot-flask-api hackerbot-command-cente
 done
 
 # Install Python Package
-# cd "$HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/"
-# echo "[STEP] Installing Hackerbot Python package..."
-# pip install . >> "$LOG_FILE" 2>&1 || {
-#     echo "[ERROR] Failed to install Hackerbot Python package. See $LOG_FILE"
-#     cleanup
-#     exit 1
-# }
-# echo "[OK] Hackerbot Python package installed."
-# echo
+cd "$HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/"
+echo "[STEP] Installing Hackerbot Python package..."
+pip install . >> "$LOG_FILE" 2>&1 || {
+    echo "[ERROR] Failed to install Hackerbot Python package. See $LOG_FILE"
+    cleanup
+    exit 1
+}
+echo "[OK] Hackerbot Python package installed."
+echo
 
 # Install Dependencies
 cd "$HOME_DIR/hackerbot/hackerbot-command-center/react/"
