@@ -131,13 +131,13 @@ git clone https://github.com/hackerbotindustries/hackerbot-python-package.git >>
     exit 1
 }
 
-# cd "$HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/"
-# echo "Installing hackerbot python package..."
-# pip install . >> "$LOG_FILE" 2>&1 || {
-#     echo "Error: Failed to install hackerbot python package. See $LOG_FILE"
-#     cleanup
-#     exit 1
-# }
+cd "$HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/"
+echo "Installing hackerbot python package..."
+pip install . >> "$LOG_FILE" 2>&1 || {
+    echo "Error: Failed to install hackerbot python package. See $LOG_FILE"
+    cleanup
+    exit 1
+}
 
 cd $HOME_DIR/hackerbot
 
@@ -184,16 +184,16 @@ add_to_cron() {
 
 cat <<EOF
 --------------------------------------------
-When starting FLASK API, and COMMAND CENTER at boot,
+When starting FLASK API(RESTFUL), and COMMAND CENTER(REACT) at boot,
 the script will occupy the serial port, and prevent other processes from using it.
 
 To avoid this, you can run the script manually, and it will not occupy the serial port.
 --------------------------------------------
-Do you want the Flask API to run on startup? (y/n)
+Do you want the Flask API(RESTFUL) to run on startup? (y/n)
 EOF
 read -r flask_answer
 
-echo "Do you want the Command Center to run on startup? (y/n)"
+echo "Do you want the Command Center(REACT) to run on startup? (y/n)"
 read -r command_center_answer
 
 if [[ "$flask_answer" == "y"  || "$flask_answer" == "Y" ]]; then
