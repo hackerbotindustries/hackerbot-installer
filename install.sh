@@ -70,7 +70,7 @@ fi
 
 if [ -d "$HOME_DIR/hackerbot" ]; then
     echo "WARNING: The directory $HOME_DIR/hackerbot already exists. It will be removed and replaced."
-    read -p "Do you still want to continue? (y/n): " dir_confirm
+    read -p "Do you wish to continue? (y/n): " dir_confirm
     if [[ "$dir_confirm" != "y" && "$dir_confirm" != "Y" ]]; then
         echo "Operation canceled. Exiting."
         exit 1
@@ -98,19 +98,18 @@ mkdir -p "$HOME_DIR/hackerbot/logs" # Directory for logs
 mkdir -p "$HOME_DIR/hackerbot/maps" # Directory for map data
 
 LOG_FILE="$HOME_DIR/hackerbot/logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
-exec > >(tee -a "$LOG_FILE") 2>&1
+
+echo "Logs will be saved to: $LOG_FILE"
 
 echo "Updating and upgrading system..."
-sudo apt-get update && sudo apt-get upgrade -y
-if [ $? -ne 0 ]; then
-    handle_update_failure
-fi
+{ 
+    sudo apt-get update && sudo apt-get upgrade -y
+} >> "$LOG_FILE" 2>&1 || handle_update_failure
 
 echo "Installing required packages..."
-sudo apt-get install -y python3 python3-pip git curl build-essential nodejs npm
-if [ $? -ne 0 ]; then
-    handle_install_failure
-fi
+{
+    sudo apt-get install -y python3 python3-pip git curl build-essential nodejs npm
+} >> "$LOG_FILE" 2>&1 || handle_install_failure
 
 echo "Creating python virtual environment..."
 python3 -m venv $HOME_DIR/hackerbot/hackerbot_venv
@@ -119,76 +118,71 @@ if [ $? -ne 0 ]; then
     cleanup
     exit 1
 fi
+
 source $HOME_DIR/hackerbot/hackerbot_venv/bin/activate
 echo "Python virtual environment activated."
 
 cd $HOME_DIR/hackerbot
 
 echo "Cloning hackerbot python package..."
-
-git clone  https://github.com/hackerbotindustries/hackerbot-python-package.git #HTTPS
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone hackerbot python package repository."
+git clone https://github.com/hackerbotindustries/hackerbot-python-package.git >> "$LOG_FILE" 2>&1 || {
+    echo "ERROR: Failed to clone hackerbot-python-package. See $LOG_FILE"
     cleanup
     exit 1
-fi
+}
 
-# cd $HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/
+# cd "$HOME_DIR/hackerbot/hackerbot-python-package/hackerbot_modules/"
 # echo "Installing hackerbot python package..."
-# pip install .
-# if [ $? -ne 0 ]; then
-#     echo "Error: Failed to install hackerbot python package."
+# pip install . >> "$LOG_FILE" 2>&1 || {
+#     echo "Error: Failed to install hackerbot python package. See $LOG_FILE"
 #     cleanup
 #     exit 1
-# fi
+# }
 
 cd $HOME_DIR/hackerbot
 
-echo "Cloning flask api..."
-
-git clone https://github.com/hackerbotindustries/hackerbot-flask-api.git #HTTPS
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone flask api repository."
+echo "Cloning hackerbot-flask-api..."
+git clone https://github.com/hackerbotindustries/hackerbot-flask-api.git >> "$LOG_FILE" 2>&1 || {
+    echo "ERROR: Failed to clone hackerbot-flask-api. See $LOG_FILE"
     cleanup
     exit 1
-fi
+}
 
 cd $HOME_DIR/hackerbot
 
-echo "Cloning command center..."
-
-git clone https://github.com/hackerbotindustries/hackerbot-command-center.git #HTTPS
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone flask api repository."
+echo "Cloning hackerbot-command-center..."
+git clone https://github.com/hackerbotindustries/hackerbot-command-center.git >> "$LOG_FILE" 2>&1 || {
+    echo "ERROR: Failed to clone hackerbot-command-center. See $LOG_FILE"
     cleanup
     exit 1
-fi
+}
 
 cd $HOME_DIR/hackerbot/hackerbot-command-center/react/
-echo "Installing frontend dependencies..."
-npm install
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to install frontend dependencies."
+{
+    npm install
+} >> "$LOG_FILE" 2>&1 || {
+    echo "Error: Failed to install react dependencies."
     cleanup
     exit 1
-fi
+}
 
 cd $HOME_DIR/hackerbot/hackerbot-flask-api/
 echo "Installing backend dependencies..."
-pip install -r requirements.txt
-if [ $? -ne 0 ]; then
+{
+    pip install -r requirements.txt
+} >> "$LOG_FILE" 2>&1 || {
     echo "Error: Failed to install backend dependencies."
     cleanup
     exit 1
-fi
-
+}
 
 # Function to add a line to crontab if not already present
 add_to_cron() {
     local cmd="$1"
     (crontab -l 2>/dev/null | grep -v -F "$cmd"; echo "$cmd") | crontab -
 }
-echo "
+
+cat <<EOF
 --------------------------------------------
 When starting FLASK API, and COMMAND CENTER at boot,
 the script will occupy the serial port, and prevent other processes from using it.
@@ -196,7 +190,7 @@ the script will occupy the serial port, and prevent other processes from using i
 To avoid this, you can run the script manually, and it will not occupy the serial port.
 --------------------------------------------
 Do you want the Flask API to run on startup? (y/n)
-"
+EOF
 read -r flask_answer
 
 echo "Do you want the Command Center to run on startup? (y/n)"
