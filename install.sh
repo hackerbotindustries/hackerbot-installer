@@ -103,7 +103,7 @@ sudo apt-get upgrade -y >> "$LOG_FILE" 2>&1 || handle_update_failure
 
 # Package Installation
 echo "[STEP] Installing required packages..."
-sudo apt-get install -y python3 python3-pip git curl build-essential nodejs npm >> "$LOG_FILE" 2>&1 || handle_install_failure
+sudo apt-get install -y python3 python3-pip git curl build-essential nodejs npm bats >> "$LOG_FILE" 2>&1 || handle_install_failure
 
 # Python Environment
 echo "[STEP] Creating Python virtual environment..."

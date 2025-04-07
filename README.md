@@ -45,8 +45,13 @@ To check and update the software, run the below commands:
 
 ### Tests
 
-Test for install.sh:
+For install.sh:
    ```bash
    cd ~/hackerbot-installer
-   bash tests/test_install.sh
+   bats tests/test_install.bats
+   ```
+For software_update.sh:
+   ```bash
+   cd ~/hackerbot-installer
+   bats tests/test_software_update.bats
    ```
