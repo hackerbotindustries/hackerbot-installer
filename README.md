@@ -47,5 +47,6 @@ To check and update the software, run the below commands:
 
 Test for install.sh:
    ```bash
+   cd ~/hackerbot-installer
    bash tests/test_install.sh
    ```
