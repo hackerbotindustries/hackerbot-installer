@@ -10,11 +10,10 @@
 # Updated:    2025.04.06
 #
 # This script installs the Hackerbot software on a Raspberry Pi 5.
+# Run ". install.sh or source install.sh" if you wish to activate venv right away.
 #
 # Special thanks to the following for their code contributions to this codebase:
-# Kyoung Whan Choe - https://github.com/kywch 
 # Allen Chien - https://github.com/AllenChienXXX
-# Ian Bernstein - https://github.com/arobodude
 ################################################################################
 
 

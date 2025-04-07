@@ -10,6 +10,9 @@
 # Updated:    2025.04.06
 #
 # This script checks for updates to the Hackerbot software on a Raspberry Pi 5.
+#
+# Special thanks to the following for their code contributions to this codebase:
+# Allen Chien - https://github.com/AllenChienXXX
 ################################################################################
 
 set -euo pipefail  # Strict mode
@@ -70,24 +73,45 @@ echo
     fi
     echo
 
-    echo "[STEP] Checking PIP packages..."
-    REQUIRED_PIP_PACKAGES=("blinker" "click" "Flask" "flask-cors" "itsdangerous" "Jinja2" \
-                          "MarkupSafe" "pip" "pyserial" "python-dotenv" "setuptools" "Werkzeug")
-    MISSING_PIP_PACKAGES=()
-    INSTALLED_PIP_PACKAGES=$(pip list --format=columns | awk '{print $1}' | tail -n +3)
+    echo "[STEP] Checking PIP packages and versions..."
+    declare -A REQUIRED_PIP_PACKAGES=(
+        [blinker]="1.9.0"
+        [click]="8.1.8"
+        [Flask]="3.1.0"
+        [flask-cors]="5.0.1"
+        [hackerbot_helper]="0.1"
+        [iniconfig]="2.1.0"
+        [itsdangerous]="2.2.0"
+        [Jinja2]="3.1.5"
+        [MarkupSafe]="3.0.2"
+        [packaging]="24.2"
+        [pip]="23.0.1"
+        [pluggy]="1.5.0"
+        [pyserial]="3.5"
+        [pytest]="8.3.5"
+        [python-dotenv]="1.0.1"
+        [setuptools]="66.1.1"
+        [Werkzeug]="3.1.3"
+    )
 
-    for PIP_PACKAGE in "${REQUIRED_PIP_PACKAGES[@]}"; do
-        if ! echo "$INSTALLED_PIP_PACKAGES" | grep -qw "$PIP_PACKAGE"; then
-            echo "[MISSING] $PIP_PACKAGE is NOT installed."
-            MISSING_PIP_PACKAGES+=("$PIP_PACKAGE")
+    MISSING_OR_WRONG_PIP_PACKAGES=()
+
+    while read -r pkg version; do
+        INSTALLED_VERSION=$(pip show "$pkg" 2>/dev/null | grep -i "^Version:" | awk '{print $2}' || echo "")
+        if [[ -z "$INSTALLED_VERSION" ]]; then
+            echo "[MISSING] $pkg is NOT installed."
+            MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
+        elif [[ "$INSTALLED_VERSION" != "$version" ]]; then
+            echo "[MISMATCH] $pkg version $INSTALLED_VERSION found, expected $version."
+            MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
         fi
-    done
+    done < <(for key in "${!REQUIRED_PIP_PACKAGES[@]}"; do echo "$key ${REQUIRED_PIP_PACKAGES[$key]}"; done)
 
-    if [ ${#MISSING_PIP_PACKAGES[@]} -ne 0 ]; then
-        echo "[STEP] Installing missing PIP packages..."
-        pip install "${MISSING_PIP_PACKAGES[@]}" >> "$LOG_FILE" 2>&1
+    if [ ${#MISSING_OR_WRONG_PIP_PACKAGES[@]} -ne 0 ]; then
+        echo "[STEP] Installing/upgrading PIP packages to exact versions..."
+        pip install --upgrade "${MISSING_OR_WRONG_PIP_PACKAGES[@]}" >> "$LOG_FILE" 2>&1
     else
-        echo "[OK] All required PIP packages are installed."
+        echo "[OK] All required PIP packages are installed and up-to-date."
     fi
     echo
 
@@ -97,5 +121,5 @@ echo
     exit 1
 }
 
-echo -e "\n[OK] Completed Software Check and Update."
+echo -e "[OK] Completed Software Check and Update."
 echo "Log saved at: $LOG_FILE"

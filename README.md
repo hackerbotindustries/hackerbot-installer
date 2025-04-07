@@ -34,5 +34,4 @@ To check and update the software, run the below commands:
    cd ~/hackerbot-installer
    ./software_update.sh
    ```
-
 ---
