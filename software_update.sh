@@ -91,7 +91,7 @@ echo
         [python-dotenv]="1.0.1"
         [setuptools]="66.1.1"
         [Werkzeug]="3.1.3"
-        [hackerbot]="0.2"
+        [hackerbot]="0.2.0"
     )
 
     MISSING_OR_WRONG_PIP_PACKAGES=()
@@ -145,5 +145,5 @@ echo
     exit 1
 }
 
-echo -e "[OK] Completed Software Check and Update."
+echo -e "[OK] Completed Software Update."
 echo "Log saved at: $LOG_FILE"
