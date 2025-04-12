@@ -79,7 +79,6 @@ echo
         [click]="8.1.8"
         [Flask]="3.1.0"
         [flask-cors]="5.0.1"
-        [hackerbot_helper]="0.1"
         [iniconfig]="2.1.0"
         [itsdangerous]="2.2.0"
         [Jinja2]="3.1.5"
@@ -92,6 +91,7 @@ echo
         [python-dotenv]="1.0.1"
         [setuptools]="66.1.1"
         [Werkzeug]="3.1.3"
+        [hackerbot]="0.2"
     )
 
     MISSING_OR_WRONG_PIP_PACKAGES=()
@@ -113,6 +113,30 @@ echo
     else
         echo "[OK] All required PIP packages are installed and up-to-date."
     fi
+    echo
+
+    echo "[STEP] Checking and updating Hackerbot repositories..."
+    cd "$HOME_DIR/hackerbot"
+
+    REPOS=("hackerbot-python-package" "hackerbot-flask-api" "hackerbot-command-center")
+
+    for repo in "${REPOS[@]}"; do
+        if [ -d "$repo/.git" ]; then
+            echo "[UPDATE] Pulling latest changes for $repo..."
+            (cd "$repo" && git pull --rebase) >> "$LOG_FILE" 2>&1 || {
+                echo "[ERROR] Failed to update $repo. See log: $LOG_FILE"
+                exit 1
+            }
+            echo "[OK] Updated $repo."
+        else
+            echo "[CLONE] Cloning $repo..."
+            git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
+                echo "[ERROR] Failed to clone $repo. See log: $LOG_FILE"
+                exit 1
+            }
+            echo "[OK] Cloned $repo."
+        fi
+    done
     echo
 
 ) || {
