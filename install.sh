@@ -165,3 +165,10 @@ echo "Flask API:"
 echo "  Launch: cd ~/hackerbot/hackerbot-flask-api/ && ./launch_flask_api.sh"
 echo "  Stop:   cd ~/hackerbot/hackerbot-flask-api/ && ./stop_flask_api.sh"
 echo
+
+echo "Startup Configuration:"
+echo "  If you wish to configure the Flask API or Command Center"
+echo "  to start automatically on system boot, run:"
+echo
+echo "    source boot_config.sh"
+echo
