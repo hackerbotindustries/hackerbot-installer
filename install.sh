@@ -92,9 +92,9 @@ fi
 
 # Cleanup and Directory Setup
 cleanup
-mkdir -p "$HOME_DIR/hackerbot" "$HOME_DIR/hackerbot/logs" "$HOME_DIR/hackerbot/maps"
+mkdir -p "$HOME_DIR/hackerbot" "$HOME_DIR/hackerbot-installer/logs"
 
-LOG_FILE="$HOME_DIR/hackerbot/logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
+LOG_FILE="$HOME_DIR/hackerbot-installer/logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').log"
 
 # System Update
 echo "[STEP] Updating system..."
@@ -140,7 +140,7 @@ declare -A REQUIRED_PIP_PACKAGES=(
 echo "[STEP] Installing required pip packages with specific versions..."
 for pkg in "${!REQUIRED_PIP_PACKAGES[@]}"; do
     version="${REQUIRED_PIP_PACKAGES[$pkg]}"
-    echo "[INFO] Installing $pkg==$version..."
+    # echo "[INFO] Installing $pkg==$version..."
     pip install "$pkg==$version" >> "$LOG_FILE" 2>&1 || {
         echo "[ERROR] Failed to install $pkg==$version. See log: $LOG_FILE"
         cleanup
