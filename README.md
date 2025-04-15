@@ -21,7 +21,7 @@ Follow the following to install the HackerBot software:
    cd ~
    git clone https://github.com/hackerbotindustries/hackerbot-installer.git
    cd ~/hackerbot-installer
-   ./install.sh
+   bash install.sh
    ```
 If you wish to activate hackerbot_venv immedietly, run the following instead:
    ```bash
