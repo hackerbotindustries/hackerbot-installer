@@ -65,8 +65,7 @@ teardown() {
 @test "Creates expected directory structure" {
   run bash "$HOME/install.sh"
   [ -d "$HOME/hackerbot" ]
-  [ -d "$HOME/hackerbot/logs" ]
-  [ -d "$HOME/hackerbot/maps" ]
+  [ -d "$HOME/hackerbot-installer/logs" ]
   [ -d "$HOME/hackerbot/hackerbot-python-package" ]
   [ -d "$HOME/hackerbot/hackerbot-flask-api" ]
   [ -d "$HOME/hackerbot/hackerbot-command-center" ]
@@ -79,7 +78,7 @@ teardown() {
 
 @test "Creates setup log file in logs directory" {
   run bash "$HOME/install.sh"
-  find "$HOME/hackerbot/logs" -type f -name 'setup_*.log' | grep -q .
+  find "$HOME/hackerbot-installer/logs" -type f -name 'setup_*.log' | grep -q .
 }
 
 @test "Mocked system commands are called during install" {
