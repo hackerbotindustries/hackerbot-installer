@@ -116,6 +116,41 @@ source "$HOME_DIR/hackerbot/hackerbot_venv/bin/activate"
 echo "[OK] Virtual environment activated."
 echo
 
+# Install Required Python Packages with Specified Versions
+declare -A REQUIRED_PIP_PACKAGES=(
+    [blinker]="1.9.0"
+    [click]="8.1.8"
+    [Flask]="3.1.0"
+    [flask-cors]="5.0.1"
+    [iniconfig]="2.1.0"
+    [itsdangerous]="2.2.0"
+    [Jinja2]="3.1.5"
+    [MarkupSafe]="3.0.2"
+    [packaging]="24.2"
+    [pip]="23.0.1"
+    [pluggy]="1.5.0"
+    [pyserial]="3.5"
+    [pytest]="8.3.5"
+    [python-dotenv]="1.0.1"
+    [setuptools]="66.1.1"
+    [Werkzeug]="3.1.3"
+    [hackerbot]="0.2.0"
+)
+
+echo "[STEP] Installing required pip packages with specific versions..."
+for pkg in "${!REQUIRED_PIP_PACKAGES[@]}"; do
+    version="${REQUIRED_PIP_PACKAGES[$pkg]}"
+    echo "[INFO] Installing $pkg==$version..."
+    pip install "$pkg==$version" >> "$LOG_FILE" 2>&1 || {
+        echo "[ERROR] Failed to install $pkg==$version. See log: $LOG_FILE"
+        cleanup
+        exit 1
+    }
+done
+echo "[OK] All pip packages installed."
+echo
+
+
 # Clone Repositories
 cd "$HOME_DIR/hackerbot"
 for repo in hackerbot-python-package hackerbot-flask-api hackerbot-command-center; do
