@@ -27,13 +27,20 @@ remove_from_cron() {
     crontab -l 2>/dev/null | grep -Fxv "$cron_entry" | crontab -
 }
 
-# Define startup commands
-FLASK_CRON="@reboot bash -c 'source ~/hackerbot/hackerbot_venv/bin/activate && ./hackerbot/hackerbot-flask-api/launch_flask_api.sh' &"
+# Constants
+VENV_LINE="source $HOME/hackerbot/hackerbot_venv/bin/activate"
+BASHRC="$HOME/.bashrc"
+FLASK_CRON="@reboot bash -c '$VENV_LINE && ./hackerbot/hackerbot-flask-api/launch_flask_api.sh' &"
 COMMAND_CENTER_CRON="@reboot bash -c './hackerbot/hackerbot-command-center/launch_command_center.sh' &"
 
 # Function to check if a cron entry exists
 is_enabled() {
     crontab -l 2>/dev/null | grep -Fxq "$1"
+}
+
+# Function to check if venv line is in bashrc
+venv_is_enabled() {
+    grep -Fxq "$VENV_LINE" "$BASHRC"
 }
 
 # Introduction
@@ -43,6 +50,9 @@ Hackerbot Startup Configuration
 
 This tool lets you choose whether the Flask API and Command Center
 should automatically start when the system boots.
+
+You can also configure whether your bash shell activates the virtual
+environment automatically by adding it to ~/.bashrc.
 
 Note:
 If enabled, these services may occupy the serial port and prevent
@@ -66,6 +76,12 @@ else
     echo " - Command Center: DISABLED at startup"
 fi
 
+if venv_is_enabled; then
+    echo " - hackerbot_venv: ENABLED in ~/.bashrc"
+else
+    echo " - hackerbot_venv: DISABLED in ~/.bashrc"
+fi
+
 # Menu loop
 while true; do
     echo "
@@ -73,9 +89,11 @@ Choose an option:
 1) Enable Flask API at startup
 2) Enable Command Center at startup
 3) Disable both (remove from startup)
-4) Exit
+4) Enable Python venv sourcing in ~/.bashrc
+5) Disable Python venv sourcing in ~/.bashrc
+6) Exit
 "
-    read -rp "Enter your choice (1-4): " choice
+    read -rp "Enter your choice (1-6): " choice
 
     case $choice in
         1)
@@ -92,11 +110,27 @@ Choose an option:
             echo "All startup entries have been removed."
             ;;
         4)
+            if venv_is_enabled; then
+                echo "Python venv activation is already enabled in ~/.bashrc"
+            else
+                echo "$VENV_LINE" >> "$BASHRC"
+                echo "Python venv activation added to ~/.bashrc"
+            fi
+            ;;
+        5)
+            if venv_is_enabled; then
+                sed -i "\|$VENV_LINE|d" "$BASHRC"
+                echo "Python venv activation removed from ~/.bashrc"
+            else
+                echo "Python venv activation is already disabled."
+            fi
+            ;;
+        6)
             echo "Exiting. Your configuration is saved."
             break
             ;;
         *)
-            echo "Invalid input. Please enter 1, 2, 3, or 4."
+            echo "Invalid input. Please enter a number between 1 and 6."
             ;;
     esac
 done
