@@ -205,5 +205,5 @@ echo "Startup Configuration:"
 echo "  If you wish to configure the Flask API or Command Center"
 echo "  to start automatically on system boot, run:"
 echo
-echo "    source boot_config.sh"
+echo "    source boot_configure.sh"
 echo
