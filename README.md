@@ -23,23 +23,21 @@ Follow the following to install the HackerBot software:
    cd ~/hackerbot-installer
    bash install.sh
    ```
-If you wish to activate hackerbot_venv immedietly, run the following instead:
-   ```bash
-   cd ~
-   git clone https://github.com/hackerbotindustries/hackerbot-installer.git
-   cd ~/hackerbot-installer
-   . install.sh
-   ```
+Now open a new terminal window and you shall see the hackerbot_venv activated!
 ---
-
-NOTE: Do not run `install.sh` from a VNC client. It can hang.
 
 ### Check and Update Software
 
 To check and update the software, run the below commands:
    ```bash
    cd ~/hackerbot-installer
-   ./software_update.sh
+   bash software_update.sh
+   ```
+
+To set some boot configurations, run:
+   ```bash
+   cd ~/hackerbot-installer
+   bash boot_configure.sh
    ```
 ---
 
