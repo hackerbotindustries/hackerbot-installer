@@ -7,98 +7,143 @@
 #
 # Created By: Allen Chien
 # Created:    April 2025
-# Updated:    2025.04.01
+# Updated:    2025.04.06
 #
 # This script checks for updates to the Hackerbot software on a Raspberry Pi 5.
 #
 # Special thanks to the following for their code contributions to this codebase:
 # Allen Chien - https://github.com/AllenChienXXX
-# Ian Bernstein - https://github.com/arobodude
 ################################################################################
 
+set -euo pipefail  # Strict mode
 
-set -e  # Exit on error
+# Header
+clear
+echo -e "============================================================="
+echo -e " HACKERBOT SOFTWARE CHECK"
+echo -e "============================================================="
+echo
 
-echo -e "###########################################################" 
-echo -e "\e[1;37m #  #   ##    ###  #   #  ####  ### \e[1;32m  ###     #####  #####"
-echo -e "\e[1;37m #  #  #  #  ##    #  #   #     #  #\e[1;32m  #  #   #    #    #"
-echo -e "\e[1;37m ####  ####  #     ####   ####  ### \e[1;32m  ###   #     #    #"
-echo -e "\e[1;37m #  #  #  #  ##    #  #   #     #  #\e[1;32m  #  #  #    #     #"
-echo -e "\e[1;37m #  #  #  #   ###  #   #  ####  #  #\e[1;32m  ###   #####      #"
-echo -e "\e[0m###########################################################"
+# Setup
+HOME_DIR="/home/$(whoami)"
+LOG_DIR="$HOME_DIR/hackerbot/logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/update_$(date +'%Y-%m-%d_%H-%M-%S').log"
+touch "$LOG_FILE"
 
-echo "--------------------------------------------"
-echo "CHECKING HACKERBOT SOFTWARE"
-echo "--------------------------------------------"
-
-
-# Check if running on Raspberry Pi 5
-echo "
---CHECKING HARDWARE--
-"
+# Check for Raspberry Pi 5
+echo "[INFO] Checking hardware..."
 if grep -q "Raspberry Pi 5" /proc/cpuinfo; then
-    echo "System is a Raspberry Pi 5. ✅"
+    echo "[OK] System is a Raspberry Pi 5."
 else
-    echo "Warning: This script is designed for Raspberry Pi 5. Proceeding with caution. ❌"
+    echo "[WARNING] This script is designed for Raspberry Pi 5. Proceeding with caution."
 fi
+echo
 
-# List of required packages
-REQUIRED_PACKAGES=("python3" "python3-pip" "git" "curl" "build-essential" "nodejs" "npm")
-MISSING_PACKAGES=()
+# Start system check
+(
+    echo "[STEP] Checking APT packages..."
+    REQUIRED_APT_PACKAGES=("python3" "python3-pip" "git" "curl" "build-essential" "nodejs" "npm")
+    MISSING_APT_PACKAGES=()
 
-# Check if a package is installed with verbose output
-echo "
---CHECKING APT PACKAGES--
-"
-for PACKAGE in "${REQUIRED_PACKAGES[@]}"; do
-    if ! dpkg -l | grep -q "^ii  $PACKAGE "; then
-        echo "$PACKAGE is NOT installed. ❌"
-        MISSING_PACKAGES+=("$PACKAGE")
+    for PACKAGE in "${REQUIRED_APT_PACKAGES[@]}"; do
+        if ! dpkg -s "$PACKAGE" &>/dev/null; then
+            echo "[MISSING] $PACKAGE is NOT installed."
+            MISSING_APT_PACKAGES+=("$PACKAGE")
+        fi
+    done
+
+    if [ ${#MISSING_APT_PACKAGES[@]} -ne 0 ]; then
+        echo "[INFO] Missing APT packages: ${MISSING_APT_PACKAGES[*]}"
+        echo "[STEP] Installing missing APT packages..."
+        sudo apt-get update >> "$LOG_FILE" 2>&1
+        sudo apt-get install -y "${MISSING_APT_PACKAGES[@]}" >> "$LOG_FILE" 2>&1
+    else
+        echo "[OK] All required APT packages are installed."
     fi
-done
+    echo
 
+    echo "[STEP] Checking Python virtual environment..."
+    if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+        echo "[ERROR] 'hackerbot_venv' virtual environment is NOT activated!"
+        echo "Please activate it using: source ~/hackerbot/hackerbot_venv/bin/activate"
+        exit 1
+    else
+        echo "[OK] Virtual environment is activated."
+    fi
+    echo
 
-if [ ${#MISSING_APT_PACKAGES[@]} -ne 0 ]; then
-    echo "Installing missing APT packages..."
-    sudo apt-get update && sudo apt-get install -y "${MISSING_APT_PACKAGES[@]}"
-else
-    echo "All required APT packages are installed. ✅"
-fi
+    echo "[STEP] Checking PIP packages and versions..."
+    declare -A REQUIRED_PIP_PACKAGES=(
+        [blinker]="1.9.0"
+        [click]="8.1.8"
+        [Flask]="3.1.0"
+        [flask-cors]="5.0.1"
+        [iniconfig]="2.1.0"
+        [itsdangerous]="2.2.0"
+        [Jinja2]="3.1.5"
+        [MarkupSafe]="3.0.2"
+        [packaging]="24.2"
+        [pip]="23.0.1"
+        [pluggy]="1.5.0"
+        [pyserial]="3.5"
+        [pytest]="8.3.5"
+        [python-dotenv]="1.0.1"
+        [setuptools]="66.1.1"
+        [Werkzeug]="3.1.3"
+        [hackerbot]="0.2.0"
+    )
 
-# Check if virtual environment is activated
-echo "
---CHECKING PYTHON VENV--
-"
-if [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "Warning: The 'hackerbot_venv' virtual environment is NOT activated! ❌"
-    echo "Please activate it using: source hackerbot_venv/bin/activate"
+    MISSING_OR_WRONG_PIP_PACKAGES=()
+
+    while read -r pkg version; do
+        INSTALLED_VERSION=$(pip show "$pkg" 2>/dev/null | grep -i "^Version:" | awk '{print $2}' || echo "")
+        if [[ -z "$INSTALLED_VERSION" ]]; then
+            echo "[MISSING] $pkg is NOT installed."
+            MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
+        elif [[ "$INSTALLED_VERSION" != "$version" ]]; then
+            echo "[MISMATCH] $pkg version $INSTALLED_VERSION found, expected $version."
+            MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
+        fi
+    done < <(for key in "${!REQUIRED_PIP_PACKAGES[@]}"; do echo "$key ${REQUIRED_PIP_PACKAGES[$key]}"; done)
+
+    if [ ${#MISSING_OR_WRONG_PIP_PACKAGES[@]} -ne 0 ]; then
+        echo "[STEP] Installing/upgrading PIP packages to exact versions..."
+        pip install --upgrade "${MISSING_OR_WRONG_PIP_PACKAGES[@]}" >> "$LOG_FILE" 2>&1
+    else
+        echo "[OK] All required PIP packages are installed and up-to-date."
+    fi
+    echo
+
+    echo "[STEP] Checking and updating Hackerbot repositories..."
+    cd "$HOME_DIR/hackerbot"
+
+    REPOS=("hackerbot-python-package" "hackerbot-flask-api" "hackerbot-command-center")
+
+    for repo in "${REPOS[@]}"; do
+        if [ -d "$repo/.git" ]; then
+            echo "[UPDATE] Pulling latest changes for $repo..."
+            (cd "$repo" && git pull --rebase) >> "$LOG_FILE" 2>&1 || {
+                echo "[ERROR] Failed to update $repo. See log: $LOG_FILE"
+                exit 1
+            }
+            echo "[OK] Updated $repo."
+        else
+            echo "[CLONE] Cloning $repo..."
+            git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
+                echo "[ERROR] Failed to clone $repo. See log: $LOG_FILE"
+                exit 1
+            }
+            echo "[OK] Cloned $repo."
+        fi
+    done
+    echo
+
+) || {
+    echo -e "\n[ERROR] An error occurred during update process."
+    echo "Check log at: $LOG_FILE"
     exit 1
-else
-    echo "Virtual environment is activated. ✅"
-fi
+}
 
-# Define required pip packages
-REQUIRED_PIP_PACKAGES=("blinker" "click" "Flask" "flask-cors" "hackerbot-helper" \
-                        "itsdangerous" "Jinja2" "MarkupSafe" "pip" "pyserial" \
-                        "python-dotenv" "setuptools" "Werkzeug")
-MISSING_PIP_PACKAGES=()
-
-# Check installed pip packages
-echo "
---CHECKING PIP PACKAGES--
-"
-INSTALLED_PIP_PACKAGES=$(pip list --format=columns | awk '{print $1}' | tail -n +3)
-for PIP_PACKAGE in "${REQUIRED_PIP_PACKAGES[@]}"; do
-    if ! echo "$INSTALLED_PIP_PACKAGES" | grep -qw "$PIP_PACKAGE"; then
-        echo "$PIP_PACKAGE is NOT installed. ❌"
-        MISSING_PIP_PACKAGES+=("$PIP_PACKAGE")
-    fi
-done
-
-# Notify about missing pip packages
-if [ ${#MISSING_PIP_PACKAGES[@]} -ne 0 ]; then
-    echo "Installing missing PIP packages..."
-    pip install "${MISSING_PIP_PACKAGES[@]}"
-else
-    echo "All required PIP packages are installed. ✅"
-fi
+echo -e "[OK] Completed Software Update."
+echo "Log saved at: $LOG_FILE"
