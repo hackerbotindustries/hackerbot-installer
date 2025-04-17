@@ -55,6 +55,7 @@ handle_install_failure() {
 cleanup() {
     echo "[INFO] Cleaning up existing installation..."
     rm -rf "$HOME_DIR/hackerbot"
+    rm -rf "~/.local/bin"
     echo
 }
 
@@ -183,6 +184,51 @@ pip install -r requirements.txt >> "$LOG_FILE" 2>&1 || {
 echo "[OK] Flask dependencies installed."
 echo
 
+echo "[STEP] Setting up global scripts..."
+
+mkdir -p ~/.local/bin || {
+    echo "[ERROR] Failed to create ~/.local/bin."
+    cleanup
+    exit 1
+}
+
+ln -sf "$HOME/hackerbot/hackerbot-command-center/launch_command_center.sh" ~/.local/bin/launch-command-center || {
+    echo "[ERROR] Failed to symlink launch_command_center.sh."
+    cleanup
+    exit 1
+}
+
+ln -sf "$HOME/hackerbot/hackerbot-command-center/stop_command_center.sh" ~/.local/bin/stop-command-center || {
+    echo "[ERROR] Failed to symlink stop_command_center.sh."
+    cleanup
+    exit 1
+}
+
+ln -sf "$HOME/hackerbot/hackerbot-flask-api/launch_flask_api.sh" ~/.local/bin/launch-flask-api || {
+    echo "[ERROR] Failed to symlink launch_flask_api.sh."
+    cleanup
+    exit 1
+}
+
+ln -sf "$HOME/hackerbot/hackerbot-flask-api/stop_flask_api.sh" ~/.local/bin/stop-flask-api || {
+    echo "[ERROR] Failed to symlink stop_flask_api.sh."
+    cleanup
+    exit 1
+}
+
+# Add ~/.local/bin to PATH in .bashrc if not already there
+if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' ~/.bashrc; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc || {
+        echo "[ERROR] Failed to append to .bashrc."
+        cleanup
+        exit 1
+    }
+    echo "[+] Added ~/.local/bin to your PATH in ~/.bashrc"
+fi
+
+echo "[OK] Global scripts configured."
+echo
+
 # Completion Message
 cd "$HOME_DIR/hackerbot-installer"
 echo -e "============================================================="
@@ -191,15 +237,8 @@ echo -e "============================================================="
 echo "Install logs saved to: $LOG_FILE"
 echo
 
-echo "Command Center:"
-echo "  Launch: cd ~/hackerbot/hackerbot-command-center/ && ./launch_command_center.sh"
-echo "  Stop:   cd ~/hackerbot/hackerbot-command-center/ && ./stop_command_center.sh"
-echo
-
-echo "Flask API:"
-echo "  Launch: cd ~/hackerbot/hackerbot-flask-api/ && ./launch_flask_api.sh"
-echo "  Stop:   cd ~/hackerbot/hackerbot-flask-api/ && ./stop_flask_api.sh"
-echo
+echo "Command Center: launch-command-center | stop-command-center"
+echo "Flask API:      launch-flask-api      | stop-flask-api"
 
 echo "Startup Configuration:"
 echo "  If you wish to configure the Flask API or Command Center"
