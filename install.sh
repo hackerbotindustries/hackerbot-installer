@@ -7,7 +7,7 @@
 #
 # Created By: Allen Chien
 # Created:    April 2025
-# Updated:    2025.04.06
+# Updated:    2025.04.16
 #
 # This script installs the Hackerbot software on a Raspberry Pi 5.
 # Run ". install.sh or source install.sh" if you wish to activate venv right away.
@@ -236,9 +236,6 @@ echo "SETUP COMPLETE"
 echo -e "============================================================="
 echo "Install logs saved to: $LOG_FILE"
 echo
-
-echo "Command Center: launch-command-center | stop-command-center"
-echo "Flask API:      launch-flask-api      | stop-flask-api"
 
 echo "Startup Configuration:"
 echo "  If you wish to configure the Flask API or Command Center"
