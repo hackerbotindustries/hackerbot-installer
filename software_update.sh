@@ -118,7 +118,7 @@ echo
     echo "[STEP] Checking and updating Hackerbot repositories..."
     cd "$HOME_DIR/hackerbot"
 
-    REPOS=("hackerbot-python-package" "hackerbot-flask-api" "hackerbot-command-center")
+    REPOS=("hackerbot-python-package" "hackerbot-flask-api" "hackerbot-command-center" "hackerbot-tutorials")
 
     for repo in "${REPOS[@]}"; do
         if [ -d "$repo/.git" ]; then

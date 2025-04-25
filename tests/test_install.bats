@@ -69,6 +69,7 @@ teardown() {
   [ -d "$HOME/hackerbot/hackerbot-python-package" ]
   [ -d "$HOME/hackerbot/hackerbot-flask-api" ]
   [ -d "$HOME/hackerbot/hackerbot-command-center" ]
+  [ -d "$HOME/hackerbot/hackerbot-tutorials" ]
 }
 
 @test "Modifies .bashrc to source venv activate" {
