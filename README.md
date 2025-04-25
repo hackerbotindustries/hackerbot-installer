@@ -1,3 +1,4 @@
+![HackerBot](images/transparent_hb_horizontal_industries_.png)
 # hackerbot-install
 
 This repository provides installation instructions and scripts for setting up the HackerBot software.
