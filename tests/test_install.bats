@@ -7,7 +7,7 @@
 #
 # Created By: Allen Chien
 # Created:    April 2025
-# Updated:    2025.04.06
+# Updated:    2025.04.16
 #
 # This script uses bats to test install.sh
 #
@@ -97,4 +97,9 @@ teardown() {
     grep -q "apt-get install" "$MOCK_LOG"
     grep -q "$pkg" "$MOCK_LOG"
   done
+}
+
+@test "Appends ~/.local/bin to PATH in .bashrc if missing" {
+  run bash "$HOME/install.sh"
+  grep -q 'export PATH="\$HOME/.local/bin:\$PATH"' "$HOME/.bashrc"
 }
