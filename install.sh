@@ -154,7 +154,7 @@ echo
 
 # Clone Repositories
 cd "$HOME_DIR/hackerbot"
-for repo in hackerbot-python-package hackerbot-flask-api hackerbot-command-center; do
+for repo in hackerbot-python-package hackerbot-flask-api hackerbot-command-center hackerbot-tutorials; do
     echo "[STEP] Cloning $repo..."
     git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
         echo "[ERROR] Failed to clone $repo. See log: $LOG_FILE"
