@@ -43,7 +43,20 @@ echo
 # Start system check
 (
     echo "[STEP] Checking APT packages..."
-    REQUIRED_APT_PACKAGES=("python3" "python3-pip" "git" "curl" "build-essential" "nodejs" "npm")
+    REQUIRED_APT_PACKAGES=(
+        "python3"
+        "python3-pip"
+        "python3.11-venv"
+        "git"
+        "curl"
+        "build-essential"
+        "nodejs"
+        "npm"
+        "bats"
+        "portaudio19-dev"
+        "cmake"
+        "libgtk-3-dev"
+    )
     MISSING_APT_PACKAGES=()
 
     for PACKAGE in "${REQUIRED_APT_PACKAGES[@]}"; do
@@ -91,7 +104,7 @@ echo
         [python-dotenv]="1.0.1"
         [setuptools]="66.1.1"
         [Werkzeug]="3.1.3"
-        [hackerbot]="0.2.0"
+        [hackerbot]=""
     )
 
     MISSING_OR_WRONG_PIP_PACKAGES=()
@@ -100,8 +113,12 @@ echo
         INSTALLED_VERSION=$(pip show "$pkg" 2>/dev/null | grep -i "^Version:" | awk '{print $2}' || echo "")
         if [[ -z "$INSTALLED_VERSION" ]]; then
             echo "[MISSING] $pkg is NOT installed."
-            MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
-        elif [[ "$INSTALLED_VERSION" != "$version" ]]; then
+            if [[ -z "$version" ]]; then
+                MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}")
+            else
+                MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
+            fi
+        elif [[ -n "$version" && "$INSTALLED_VERSION" != "$version" ]]; then
             echo "[MISMATCH] $pkg version $INSTALLED_VERSION found, expected $version."
             MISSING_OR_WRONG_PIP_PACKAGES+=("${pkg}==${version}")
         fi
