@@ -104,7 +104,7 @@ sudo apt-get upgrade -y >> "$LOG_FILE" 2>&1 || handle_update_failure
 
 # Package Installation
 echo "[STEP] Installing required packages..."
-sudo apt-get install -y python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats >> "$LOG_FILE" 2>&1 || handle_install_failure
+sudo apt-get install -y python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev >> "$LOG_FILE" 2>&1 || handle_install_failure
 
 # Python Environment
 echo "[STEP] Creating Python virtual environment..."
@@ -135,7 +135,7 @@ declare -A REQUIRED_PIP_PACKAGES=(
     [python-dotenv]="1.0.1"
     [setuptools]="66.1.1"
     [Werkzeug]="3.1.3"
-    [hackerbot]="0.2.0"
+    [hackerbot]=""
 )
 
 echo "[STEP] Installing required pip packages with specific versions..."
