@@ -141,16 +141,23 @@ declare -A REQUIRED_PIP_PACKAGES=(
 echo "[STEP] Installing required pip packages with specific versions..."
 for pkg in "${!REQUIRED_PIP_PACKAGES[@]}"; do
     version="${REQUIRED_PIP_PACKAGES[$pkg]}"
-    # echo "[INFO] Installing $pkg==$version..."
-    pip install "$pkg==$version" >> "$LOG_FILE" 2>&1 || {
-        echo "[ERROR] Failed to install $pkg==$version. See log: $LOG_FILE"
-        cleanup
-        exit 1
-    }
+    if [ -z "$version" ]; then
+        # echo "[INFO] Installing latest version of $pkg..."
+        pip install --upgrade "$pkg" >> "$LOG_FILE" 2>&1 || {
+            echo "[ERROR] Failed to install latest $pkg. See log: $LOG_FILE"
+            cleanup
+            exit 1
+        }
+    else
+        # echo "[INFO] Installing $pkg==$version..."
+        pip install "$pkg==$version" >> "$LOG_FILE" 2>&1 || {
+            echo "[ERROR] Failed to install $pkg==$version. See log: $LOG_FILE"
+            cleanup
+            exit 1
+        }
+    fi
 done
 echo "[OK] All pip packages installed."
-echo
-
 
 # Clone Repositories
 cd "$HOME_DIR/hackerbot"
