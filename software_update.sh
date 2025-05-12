@@ -20,7 +20,7 @@ set -euo pipefail  # Strict mode
 # Header
 clear
 echo -e "============================================================="
-echo -e " HACKERBOT SOFTWARE CHECK"
+echo -e " HACKERBOT SOFTWARE UPDATE"
 echo -e "============================================================="
 echo
 
@@ -31,14 +31,12 @@ mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/update_$(date +'%Y-%m-%d_%H-%M-%S').log"
 touch "$LOG_FILE"
 
-# Check for Raspberry Pi 5
-echo "[INFO] Checking hardware..."
+# System check
 if grep -q "Raspberry Pi 5" /proc/cpuinfo; then
     echo "[OK] System is a Raspberry Pi 5."
 else
     echo "[WARNING] This script is designed for Raspberry Pi 5. Proceeding with caution."
 fi
-echo
 
 # Start system check
 (
@@ -84,6 +82,7 @@ echo
     else
         echo "[OK] Virtual environment is activated."
     fi
+    echo
 
     echo "[STEP] Checking PIP packages and versions..."
     declare -A REQUIRED_PIP_PACKAGES=(
@@ -138,21 +137,19 @@ echo
 
     for repo in "${REPOS[@]}"; do
         if [ -d "$repo/.git" ]; then
-            echo "[UPDATE] Pulling latest changes for $repo..."
-            (cd "$repo" && git pull --rebase) >> "$LOG_FILE" 2>&1 || {
-                echo "[ERROR] Failed to update $repo. See log: $LOG_FILE"
-                exit 1
-            }
-            echo "[OK] Updated $repo."
+            # echo "[UPDATE] Rebasing latest changes for $repo..."
+            (cd "$repo" && git fetch --all >> "$LOG_FILE" 2>&1 && git rebase origin/main || git reset --hard origin/main) >> "$LOG_FILE" 2>&1
+            # echo "[OK] Updated $repo."
         else
             echo "[CLONE] Cloning $repo..."
             git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
-                echo "[ERROR] Failed to clone $repo. See log: $LOG_FILE"
+                echo "[ERROR] Failed to clone $repo."
                 exit 1
             }
-            echo "[OK] Cloned $repo."
+            # echo "[OK] Cloned $repo."
         fi
     done
+    echo "[OK] Hackerbot repositories are up-to-date."
     echo
 
 ) || {

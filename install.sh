@@ -65,7 +65,7 @@ handle_install_failure() {
 cleanup() {
     echo "[INFO] Cleaning up existing installation..."
     rm -rf "$HOME_DIR/hackerbot"
-    rm -rf "~/.local/bin"
+    rm -rf ~/.local/bin
     echo
 }
 
