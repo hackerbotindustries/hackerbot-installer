@@ -7,7 +7,7 @@
 #
 # Created By: Allen Chien
 # Created:    April 2025
-# Updated:    2025.04.16
+# Updated:    2025.05.12
 #
 # This script installs the Hackerbot software on a Raspberry Pi 5.
 #
