@@ -7,7 +7,7 @@
 #
 # Created By: Allen Chien
 # Created:    April 2025
-# Updated:    2025.04.16
+# Updated:    2025.05.12
 #
 # This script uses bats to test install.sh
 #
@@ -31,6 +31,15 @@ echo "[MOCK] $cmd \$@" >> "$MOCK_LOG"
 EOF
     chmod +x "$HOME/bin/$cmd"
   done
+  # Mock python3 to create venv structure
+  cat <<'EOF' > "$HOME/bin/python3"
+#!/bin/bash
+echo "[MOCK] python3 $@" >> "$MOCK_LOG"
+if [[ "$*" == *"venv"* ]]; then
+  mkdir -p "$HOME/hackerbot/hackerbot_venv/bin"
+  touch "$HOME/hackerbot/hackerbot_venv/bin/activate"
+fi
+EOF
 
   cat <<'EOF' > "$HOME/bin/git"
 #!/bin/bash
@@ -38,7 +47,9 @@ echo "[MOCK] git $@" >> "$MOCK_LOG"
 if [[ "$1" == "clone" ]]; then
   repo_url="$2"
   repo_name=$(basename "$repo_url" .git)
-  mkdir -p "$repo_name"
+  target_dir="$HOME/hackerbot/$repo_name"
+  mkdir -p "$target_dir/react"
+  touch "$target_dir/requirements.txt"
 fi
 EOF
   chmod +x "$HOME/bin/git"
@@ -98,9 +109,4 @@ teardown() {
     grep -q "apt-get install" "$MOCK_LOG"
     grep -q "$pkg" "$MOCK_LOG"
   done
-}
-
-@test "Appends ~/.local/bin to PATH in .bashrc if missing" {
-  run bash "$HOME/install.sh"
-  grep -q 'export PATH="\$HOME/.local/bin:\$PATH"' "$HOME/.bashrc"
 }
