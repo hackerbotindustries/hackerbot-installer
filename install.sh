@@ -285,9 +285,8 @@ echo -e "============================================================="
 echo "Install logs saved to: $LOG_FILE"
 echo
 
-echo "Startup Configuration:"
-echo "  If you wish to configure the Flask API or Command Center"
-echo "  to start automatically on system boot, run:"
-echo
-echo "    source boot_configure.sh"
+echo "================ Instructions ================"
+echo "→ Enable auto-start when boot : source boot_configure.sh"
+echo "→ Activate python venv        : source ~/.bashrc"
+echo "======================================================"
 echo
