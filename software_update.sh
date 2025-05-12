@@ -84,7 +84,6 @@ echo
     else
         echo "[OK] Virtual environment is activated."
     fi
-    echo
 
     echo "[STEP] Checking PIP packages and versions..."
     declare -A REQUIRED_PIP_PACKAGES=(
