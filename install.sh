@@ -147,6 +147,15 @@ curl -Ls https://astral.sh/uv/install.sh | bash >> "$LOG_FILE" 2>&1 || {
     exit 1
 }
 
+export PATH="$HOME/.local/bin:$PATH"
+
+# Optional: confirm uv is available
+if ! command -v uv &>/dev/null; then
+    echo "[ERROR] uv is not available in PATH after installation."
+    cleanup
+    exit 1
+fi
+
 # Install Required Python Packages with Specified Versions
 declare -A REQUIRED_PIP_PACKAGES=(
     [blinker]="1.9.0" [click]="8.1.8" [Flask]="3.1.0" [flask-cors]="5.0.1"
