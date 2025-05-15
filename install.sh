@@ -117,7 +117,7 @@ done
 echo
 
 # Package Installation
-REQUIRED_APT_PACKAGES=(python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev)
+REQUIRED_APT_PACKAGES=(python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev flac)
 echo "[INFO] Installing required packages..."
 for i in "${!REQUIRED_APT_PACKAGES[@]}"; do
     sudo apt-get install -y ${REQUIRED_APT_PACKAGES[$i]} >> "$LOG_FILE" 2>&1 || handle_install_failure
