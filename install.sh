@@ -88,17 +88,15 @@ if [ -d "$HOME_DIR/hackerbot" ]; then
 fi
 
 # Auto-activate virtual env option
-read -p "Auto-activate virtual environment on terminal startup? (y/n): " activate_venv
-if [[ "$activate_venv" == "y" || "$activate_venv" == "Y" ]]; then
-    VENV_CMD="source /home/$(whoami)/hackerbot/hackerbot_venv/bin/activate"
-    if ! grep -Fxq "$VENV_CMD" ~/.bashrc; then
+VENV_CMD="source /home/$(whoami)/hackerbot/hackerbot_venv/bin/activate"
+
+if ! grep -Fxq "$VENV_CMD" ~/.bashrc; then
+    read -p "Auto-activate virtual environment on terminal startup? (y/n): " activate_venv
+    if [[ "$activate_venv" == "y" || "$activate_venv" == "Y" ]]; then
         echo "[INFO] Adding virtual environment activation to .bashrc..."
         echo "$VENV_CMD" >> ~/.bashrc
         echo "[INFO] Auto-activation added."
-    else
-        echo "[INFO] Auto-activation already present in .bashrc."
     fi
-    echo
 fi
 
 # Cleanup and Directory Setup
@@ -119,7 +117,7 @@ done
 echo
 
 # Package Installation
-REQUIRED_APT_PACKAGES=(python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev)
+REQUIRED_APT_PACKAGES=(python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev flac)
 echo "[INFO] Installing required packages..."
 for i in "${!REQUIRED_APT_PACKAGES[@]}"; do
     sudo apt-get install -y ${REQUIRED_APT_PACKAGES[$i]} >> "$LOG_FILE" 2>&1 || handle_install_failure
@@ -131,7 +129,7 @@ echo
 
 # Python Environment
 echo "[INFO] Creating Python virtual environment..."
-python3 -m venv "$HOME_DIR/hackerbot/hackerbot_venv" || {
+python3 -m venv --system-site-packages "$HOME_DIR/hackerbot/hackerbot_venv" || {
     echo "[ERROR] Failed to create virtual environment."
     cleanup
     exit 1
