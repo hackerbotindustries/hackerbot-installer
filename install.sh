@@ -245,29 +245,31 @@ mkdir -p ~/.local/bin || {
     exit 1
 }
 
-ln -sf "$HOME/hackerbot/hackerbot-command-center/launch_command_center.sh" ~/.local/bin/launch-command-center || {
-    echo "[ERROR] Failed to symlink launch_command_center.sh."
-    cleanup
-    exit 1
-}
+# Define symlink targets and destinations
+declare -A SCRIPTS=(
+    ["launch-command-center"]="$HOME/hackerbot/hackerbot-command-center/launch_command_center.sh"
+    ["stop-command-center"]="$HOME/hackerbot/hackerbot-command-center/stop_command_center.sh"
+    ["launch-flask-api"]="$HOME/hackerbot/hackerbot-flask-api/launch_flask_api.sh"
+    ["stop-flask-api"]="$HOME/hackerbot/hackerbot-flask-api/stop_flask_api.sh"
+)
 
-ln -sf "$HOME/hackerbot/hackerbot-command-center/stop_command_center.sh" ~/.local/bin/stop-command-center || {
-    echo "[ERROR] Failed to symlink stop_command_center.sh."
-    cleanup
-    exit 1
-}
+# Remove existing symlinks and configure new ones
+for script_name in "${!SCRIPTS[@]}"; do
+    target_path="${SCRIPTS[$script_name]}"
+    symlink_path="$HOME/.local/bin/$script_name"
 
-ln -sf "$HOME/hackerbot/hackerbot-flask-api/launch_flask_api.sh" ~/.local/bin/launch-flask-api || {
-    echo "[ERROR] Failed to symlink launch_flask_api.sh."
-    cleanup
-    exit 1
-}
+    if [ -L "$symlink_path" ] || [ -e "$symlink_path" ]; then
+        echo "[REMOVE] Removing existing global script: $symlink_path"
+        rm -f "$symlink_path"
+    fi
 
-ln -sf "$HOME/hackerbot/hackerbot-flask-api/stop_flask_api.sh" ~/.local/bin/stop-flask-api || {
-    echo "[ERROR] Failed to symlink stop_flask_api.sh."
-    cleanup
-    exit 1
-}
+    echo "[LINK] Creating symlink: $symlink_path -> $target_path"
+    ln -sf "$target_path" "$symlink_path" || {
+        echo "[ERROR] Failed to symlink $target_path."
+        cleanup
+        exit 1
+    }
+done
 
 # Add ~/.local/bin to PATH in .bashrc if not already there
 if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' ~/.bashrc; then

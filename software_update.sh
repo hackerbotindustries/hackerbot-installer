@@ -130,27 +130,26 @@ fi
     fi
     echo
 
-    echo "[STEP] Checking and updating Hackerbot repositories..."
+    echo "[STEP] Updating Hackerbot repositories..."
     cd "$HOME_DIR/hackerbot"
 
     REPOS=("hackerbot-python-package" "hackerbot-flask-api" "hackerbot-command-center" "hackerbot-tutorials")
 
     for repo in "${REPOS[@]}"; do
-        if [ -d "$repo/.git" ]; then
-            # echo "[UPDATE] Rebasing latest changes for $repo..."
-            (cd "$repo" && git fetch --all >> "$LOG_FILE" 2>&1 && git rebase origin/main || git reset --hard origin/main) >> "$LOG_FILE" 2>&1
-            # echo "[OK] Updated $repo."
-        else
-            echo "[CLONE] Cloning $repo..."
-            git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
-                echo "[ERROR] Failed to clone $repo."
-                exit 1
-            }
-            # echo "[OK] Cloned $repo."
+        if [ -d "$repo" ]; then
+            # echo "[REMOVE] Deleting existing $repo directory..."
+            rm -rf "$repo"
         fi
+
+        # echo "[CLONE] Cloning $repo..."
+        git clone https://github.com/hackerbotindustries/$repo.git >> "$LOG_FILE" 2>&1 || {
+            echo "[ERROR] Failed to clone $repo."
+            exit 1
+        }
     done
-    echo "[OK] Hackerbot repositories are up-to-date."
-    echo
+
+    echo "[OK] Hackerbot repositories have been updated."
+
 
 ) || {
     echo -e "\n[ERROR] An error occurred during update process."
