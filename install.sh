@@ -15,7 +15,7 @@
 # Allen Chien - https://github.com/AllenChienXXX
 ################################################################################
 
-set -o pipefail
+set -euo pipefail
 
 clear
 echo -e "=============================================================" 
@@ -50,13 +50,13 @@ check_raspberry_pi
 
 # Failure Handlers
 handle_update_failure() {
-    echo "[ERROR] Failed to update system. Please check your network or permissions."
+    echo "[ERROR] Failed to update system. Please check your network or permissions. Check $LOG_FILE for details."
     cleanup
     exit 1
 }
 
 handle_install_failure() {
-    echo "[ERROR] Package installation failed. Please check your network or permissions."
+    echo "[ERROR] Package installation failed. Please check your network or permissions. Check $LOG_FILE for details."
     cleanup
     exit 1
 }
