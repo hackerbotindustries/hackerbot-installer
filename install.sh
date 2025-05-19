@@ -15,7 +15,7 @@
 # Allen Chien - https://github.com/AllenChienXXX
 ################################################################################
 
-set -o pipefail
+set -euo pipefail
 
 clear
 echo -e "=============================================================" 
@@ -50,13 +50,13 @@ check_raspberry_pi
 
 # Failure Handlers
 handle_update_failure() {
-    echo "[ERROR] Failed to update system. Please check your network or permissions."
+    echo "[ERROR] Failed to update system. Please check your network or permissions. Check $LOG_FILE for details."
     cleanup
     exit 1
 }
 
 handle_install_failure() {
-    echo "[ERROR] Package installation failed. Please check your network or permissions."
+    echo "[ERROR] Package installation failed. Please check your network or permissions. Check $LOG_FILE for details."
     cleanup
     exit 1
 }
@@ -109,10 +109,12 @@ LOG_FILE="$HOME_DIR/hackerbot-installer/logs/setup_$(date +'%Y-%m-%d_%H-%M-%S').
 update_steps=("update" "upgrade")
 echo "[INFO] Updating system..."
 for i in "${!update_steps[@]}"; do
-    sudo apt-get ${update_steps[$i]} -y >> "$LOG_FILE" 2>&1 || handle_update_failure
+    if ! sudo DEBIAN_FRONTEND=noninteractive apt-get "${update_steps[$i]}" -y >> "$LOG_FILE" 2>&1; then
+        handle_update_failure
+    fi
+
     show_task_progress $((i+1)) ${#update_steps[@]}
     sleep 0.2
-
 done
 echo
 
@@ -120,10 +122,15 @@ echo
 REQUIRED_APT_PACKAGES=(python3 python3-pip python3.11-venv git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev flac)
 echo "[INFO] Installing required packages..."
 for i in "${!REQUIRED_APT_PACKAGES[@]}"; do
-    sudo apt-get install -y ${REQUIRED_APT_PACKAGES[$i]} >> "$LOG_FILE" 2>&1 || handle_install_failure
+    pkg=${REQUIRED_APT_PACKAGES[$i]}
+    if ! dpkg -s "$pkg" &> /dev/null; then
+        if ! sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg" >> "$LOG_FILE" 2>&1; then
+            handle_install_failure
+        fi
+    fi
+
     show_task_progress $((i+1)) ${#REQUIRED_APT_PACKAGES[@]}
     sleep 0.1
-
 done
 echo
 
