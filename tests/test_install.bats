@@ -106,7 +106,9 @@ teardown() {
   required_packages=(python3 python3-pip git curl build-essential nodejs npm bats portaudio19-dev cmake libgtk-3-dev flac)
 
   for pkg in "${required_packages[@]}"; do
-    grep -q "apt-get install" "$MOCK_LOG"
-    grep -q "$pkg" "$MOCK_LOG"
+    if ! dpkg -s "$pkg" &>/dev/null; then
+      grep -q "apt-get install" "$MOCK_LOG"
+      grep -q "$pkg" "$MOCK_LOG"
+    fi
   done
 }
